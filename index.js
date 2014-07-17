@@ -29,21 +29,29 @@
         });
     }
 
-    function Parser(sep, options) {
+    function Parser(sep, starter, terminator, options) {
         var opt = extend({
             header: true
         }, options);
 
         this.sep = sep;
         this.header = opt.header;
+        if (starter) {
+            this.starter = starter;
+        }
+        if (terminator){
+            this.terminator = terminator;
+        }
     }
 
     Parser.prototype.stringify = function(data) {
         var sep = this.sep,
             head = !!this.header,
             keys = (typeof data[0] === 'object') && Object.keys(data[0]),
+            starter = this.starter ? (this.starter) : '',
+            terminator = this.terminator ? (this.terminator) : '',
             header = keys && keys.join(sep),
-            output = head ? (header + br) : '';
+            output = head ? (starter + header + terminator + br) : '';
 
         if (!data || !keys) return '';
 
@@ -53,7 +61,7 @@
                 p.push(obj[key]);
                 return p;
             }, []);
-            return values.join(sep);
+            return starter + values.join(sep) + terminator;
         }).join(br);
     };
 
